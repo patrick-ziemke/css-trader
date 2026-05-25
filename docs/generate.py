@@ -569,10 +569,10 @@ document.querySelectorAll('.overlay').forEach(o => {{
 </body>
 </html>"""
 
-    os.makedirs("dashboard", exist_ok=True)
-    with open("dashboard/index.html", "w", encoding="utf-8") as f:
+    os.makedirs("docs", exist_ok=True)
+    with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("[dashboard] Generated dashboard/index.html")
+    print("[docs] Generated docs/index.html")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Trader</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f5f5f5; color: #1a1a1a; }
+  .header { background: #fff; border-bottom: 0.5px solid #e0e0e0;
+    padding: 14px 16px; position: sticky; top: 0; z-index: 10; }
+  .header-row { display: flex; justify-content: space-between; align-items: center; }
+  .header-title { font-size: 18px; font-weight: 500; }
+  .header-scan { font-size: 11px; color: #888; margin-top: 2px; }
+  .regime-badge { font-size: 11px; font-weight: 500; padding: 3px 10px;
+    border-radius: 20px; background: #eafaf1; color: #1a7f4b; }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px; padding: 12px 16px; }
+  .metric { background: #fff; border-radius: 10px; padding: 10px 12px;
+    border: 0.5px solid #e0e0e0; text-align: center; }
+  .metric-val { font-size: 17px; font-weight: 500; }
+  .metric-lbl { font-size: 10px; color: #888; margin-top: 2px; }
+  .tabs { display: flex; gap: 0; padding: 0 16px;
+    border-bottom: 0.5px solid #e0e0e0; background: #fff; }
+  .tab { font-size: 13px; padding: 10px 14px; cursor: pointer;
+    border-bottom: 2px solid transparent; color: #888; white-space: nowrap; }
+  .tab.active { color: #1a1a1a; font-weight: 500;
+    border-bottom-color: #1a1a1a; }
+  .tab-content { display: none; padding: 14px 16px; }
+  .tab-content.active { display: block; }
+  .card { background: #fff; border-radius: 12px; padding: 14px;
+    border: 0.5px solid #e0e0e0; }
+  .pos-stat { background: #f8f8f8; border-radius: 8px; padding: 8px 10px; }
+  .pos-stat-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+  .pos-stat-val { font-size: 13px; font-weight: 500; }
+  .stat-card { background: #fff; border-radius: 10px; padding: 12px 14px;
+    border: 0.5px solid #e0e0e0; }
+  .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .stat-val { font-size: 18px; font-weight: 500; }
+  .btn-success { background: #eafaf1; color: #1a7f4b; border: 0.5px solid #a9dfbf;
+    border-radius: 8px; padding: 7px 14px; font-size: 13px; cursor: pointer; }
+  .btn-danger { background: #fdf2f2; color: #c0392b; border: 0.5px solid #f1948a;
+    border-radius: 8px; padding: 7px 14px; font-size: 13px; cursor: pointer;
+    width: 100%; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 16px; padding: 20px;
+    width: 100%; max-width: 380px; }
+  .modal-title { font-size: 16px; font-weight: 500; margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 12px; color: #888; margin-bottom: 4px; display: block; }
+  .form-input { width: 100%; padding: 10px 12px; border: 0.5px solid #ddd;
+    border-radius: 8px; font-size: 15px; outline: none; }
+  .form-input:focus { border-color: #1a1a1a; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-hint { font-size: 11px; color: #aaa; margin-top: 3px; }
+  .btn-primary { background: #1a1a1a; color: #fff; border: none;
+    border-radius: 8px; padding: 12px; font-size: 14px; cursor: pointer;
+    width: 100%; margin-top: 4px; }
+  .btn-cancel { background: none; border: none; color: #888;
+    font-size: 13px; cursor: pointer; width: 100%; padding: 10px;
+    margin-top: 6px; }
+  select.form-input { appearance: none; }
+  .section-label { font-size: 11px; font-weight: 500; color: #888;
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <div>
+      <div class="header-title">CSS Trader</div>
+      <div class="header-scan">Last scan: May 25 2026, 05:50 AM UTC</div>
+    </div>
+    <div class="regime-badge">BULL</div>
+  </div>
+</div>
+
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-val" style="color:#888">+$0.00</div>
+    <div class="metric-lbl">This week</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val" style="color:#888">+$0.00</div>
+    <div class="metric-lbl">All time</div>
+  </div>
+  <div class="metric">
+    <div class="metric-val">0.0%</div>
+    <div class="metric-lbl">Win rate</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('positions')">Positions (0)</div>
+  <div class="tab" onclick="showTab('signals')">Signals (4)</div>
+  <div class="tab" onclick="showTab('history')">History (0)</div>
+  <div class="tab" onclick="showTab('stats')">Stats</div>
+</div>
+
+<div id="tab-positions" class="tab-content active">
+  <div class="section-label" style="margin-bottom:12px">Open positions (0/5)</div>
+  <p style="color:#888;font-size:14px;padding:12px 0">No open positions.</p>
+</div>
+
+<div id="tab-signals" class="tab-content">
+  <div class="section-label" style="margin-bottom:12px">Latest buy signals &mdash; May 25 2026, 05:50 AM UTC</div>
+  
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <span style="font-size:16px;font-weight:500">ROST</span>
+              <span style="font-size:12px;color:#888;margin-left:8px">Score 8/10</span>
+            </div>
+            <button class="btn-success" onclick="openBuyForm('ROST', 234.81, 1, 220.77, 255.87)">
+              Log buy
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <div class="pos-stat"><div class="pos-stat-label">Entry</div><div class="pos-stat-val">$234.81</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Stop</div><div class="pos-stat-val" style="color:#c0392b">$220.77</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Target</div><div class="pos-stat-val" style="color:#1a7f4b">$255.87</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Suggested shares</div><div class="pos-stat-val">1</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Position cost</div><div class="pos-stat-val">$234.81</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Max risk</div><div class="pos-stat-val">$25.00</div></div>
+          </div>
+          <div style="font-size:11px;color:#888">Signals: trend_alignment, rsi_bounce, macd_flip, volume_surge</div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <span style="font-size:16px;font-weight:500">AEE</span>
+              <span style="font-size:12px;color:#888;margin-left:8px">Score 7/10</span>
+            </div>
+            <button class="btn-success" onclick="openBuyForm('AEE', 111.29, 2, 107.4, 117.12)">
+              Log buy
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <div class="pos-stat"><div class="pos-stat-label">Entry</div><div class="pos-stat-val">$111.29</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Stop</div><div class="pos-stat-val" style="color:#c0392b">$107.40</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Target</div><div class="pos-stat-val" style="color:#1a7f4b">$117.12</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Suggested shares</div><div class="pos-stat-val">2</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Position cost</div><div class="pos-stat-val">$222.58</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Max risk</div><div class="pos-stat-val">$25.00</div></div>
+          </div>
+          <div style="font-size:11px;color:#888">Signals: trend_alignment, rsi_bounce, macd_flip, support_confluence</div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <span style="font-size:16px;font-weight:500">UPS</span>
+              <span style="font-size:12px;color:#888;margin-left:8px">Score 7/10</span>
+            </div>
+            <button class="btn-success" onclick="openBuyForm('UPS', 101.02, 2, 96.67, 107.54)">
+              Log buy
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <div class="pos-stat"><div class="pos-stat-label">Entry</div><div class="pos-stat-val">$101.02</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Stop</div><div class="pos-stat-val" style="color:#c0392b">$96.67</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Target</div><div class="pos-stat-val" style="color:#1a7f4b">$107.54</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Suggested shares</div><div class="pos-stat-val">2</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Position cost</div><div class="pos-stat-val">$202.04</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Max risk</div><div class="pos-stat-val">$25.00</div></div>
+          </div>
+          <div style="font-size:11px;color:#888">Signals: trend_alignment, rsi_bounce, macd_flip, support_confluence</div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <span style="font-size:16px;font-weight:500">XEL</span>
+              <span style="font-size:12px;color:#888;margin-left:8px">Score 7/10</span>
+            </div>
+            <button class="btn-success" onclick="openBuyForm('XEL', 81.08, 3, 78.27, 85.29)">
+              Log buy
+            </button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <div class="pos-stat"><div class="pos-stat-label">Entry</div><div class="pos-stat-val">$81.08</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Stop</div><div class="pos-stat-val" style="color:#c0392b">$78.27</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Target</div><div class="pos-stat-val" style="color:#1a7f4b">$85.29</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Suggested shares</div><div class="pos-stat-val">3</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Position cost</div><div class="pos-stat-val">$243.24</div></div>
+            <div class="pos-stat"><div class="pos-stat-label">Max risk</div><div class="pos-stat-val">$25.00</div></div>
+          </div>
+          <div style="font-size:11px;color:#888">Signals: trend_alignment, rsi_bounce, macd_flip, support_confluence</div>
+        </div>
+</div>
+
+<div id="tab-history" class="tab-content">
+  <div class="section-label" style="margin-bottom:12px">Closed trades</div>
+  <p style="color:#888;font-size:14px;padding:12px 0">No closed trades yet.</p>
+</div>
+
+<div id="tab-stats" class="tab-content">
+  <div class="section-label" style="margin-bottom:12px">Performance</div>
+  
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px">
+      <div class="stat-card">
+          <div class="stat-label">This week</div>
+          <div class="stat-val" style="color:#888">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">This month</div>
+          <div class="stat-val" style="color:#888">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">This year</div>
+          <div class="stat-val" style="color:#888">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">All time</div>
+          <div class="stat-val" style="color:#888">+$0.00</div>
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+      <div class="stat-card">
+          <div class="stat-label">Win rate</div>
+          <div class="stat-val" style="color:#1a1a1a">0.0%</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Total trades</div>
+          <div class="stat-val" style="color:#1a1a1a">0</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Wins / Losses</div>
+          <div class="stat-val" style="color:#1a1a1a">0 / 0</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Avg gain</div>
+          <div class="stat-val" style="color:#1a7f4b">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Avg loss</div>
+          <div class="stat-val" style="color:#c0392b">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Best trade</div>
+          <div class="stat-val" style="color:#1a7f4b">+$0.00</div>
+        </div>
+      <div class="stat-card">
+          <div class="stat-label">Worst trade</div>
+          <div class="stat-val" style="color:#c0392b">+$0.00</div>
+        </div>
+    </div>
+</div>
+
+<!-- Buy modal -->
+<div class="overlay" id="buy-overlay">
+  <div class="modal">
+    <div class="modal-title" id="buy-title">Log buy</div>
+    <div class="form-group">
+      <label class="form-label">Shares purchased (fractional ok)</label>
+      <input class="form-input" type="number" step="0.0001" id="buy-shares"
+        placeholder="e.g. 1.5">
+      <div class="form-hint" id="buy-shares-hint"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Price per share you paid</label>
+      <input class="form-input" type="number" step="0.0001" id="buy-price"
+        placeholder="e.g. 234.81">
+      <div class="form-hint" id="buy-price-hint"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Stop loss price</label>
+      <input class="form-input" type="number" step="0.0001" id="buy-stop">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Target price (50% exit)</label>
+      <input class="form-input" type="number" step="0.0001" id="buy-target">
+    </div>
+    <button class="btn-primary" onclick="submitBuy()">Confirm buy</button>
+    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Sell modal -->
+<div class="overlay" id="sell-overlay">
+  <div class="modal">
+    <div class="modal-title" id="sell-title">Log sell</div>
+    <div class="form-group">
+      <label class="form-label">Shares sold (fractional ok)</label>
+      <input class="form-input" type="number" step="0.0001" id="sell-shares"
+        placeholder="e.g. 0.75">
+      <div class="form-hint" id="sell-shares-hint"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Price per share you received</label>
+      <input class="form-input" type="number" step="0.0001" id="sell-price"
+        placeholder="e.g. 255.87">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Exit reason</label>
+      <select class="form-input" id="sell-reason">
+        <option value="target">Target hit</option>
+        <option value="stop">Stop loss hit</option>
+        <option value="trailing_stop">Trailing stop hit</option>
+        <option value="time">Time stop (day 15)</option>
+        <option value="signal_reversal">Signal reversal</option>
+        <option value="manual">Manual exit</option>
+      </select>
+    </div>
+    <div id="sell-pnl-preview"
+      style="background:#f8f8f8;border-radius:8px;padding:10px 12px;
+        margin-bottom:12px;font-size:13px;display:none">
+    </div>
+    <button class="btn-primary" onclick="submitSell()">Confirm sell</button>
+    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  positions: [],
+  signals: [{"ticker": "ROST", "score": 8, "signals": {"trend_alignment": true, "rsi_bounce": true, "macd_flip": true, "volume_surge": true, "support_confluence": false, "sector_strength": false}, "entry": 234.81, "stop": 220.77, "target": 255.87, "atr": 7.02, "shares": 1, "position_value": 234.81, "sector_etf": "N/A"}, {"ticker": "AEE", "score": 7, "signals": {"trend_alignment": true, "rsi_bounce": true, "macd_flip": true, "volume_surge": false, "support_confluence": true, "sector_strength": false}, "entry": 111.29, "stop": 107.4, "target": 117.12, "atr": 1.94, "shares": 2, "position_value": 222.58, "sector_etf": "N/A"}, {"ticker": "UPS", "score": 7, "signals": {"trend_alignment": true, "rsi_bounce": true, "macd_flip": true, "volume_surge": false, "support_confluence": true, "sector_strength": false}, "entry": 101.02, "stop": 96.67, "target": 107.54, "atr": 2.17, "shares": 2, "position_value": 202.04, "sector_etf": "N/A"}, {"ticker": "XEL", "score": 7, "signals": {"trend_alignment": true, "rsi_bounce": true, "macd_flip": true, "volume_surge": false, "support_confluence": true, "sector_strength": false}, "entry": 81.08, "stop": 78.27, "target": 85.29, "atr": 1.4, "shares": 3, "position_value": 243.24, "sector_etf": "N/A"}]
+};
+
+let activeTicker = null;
+let activeShares = 0;
+let activeEntry = 0;
+
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function openBuyForm(ticker, entry, shares, stop, target) {
+  activeTicker = ticker;
+  document.getElementById('buy-title').textContent = 'Log buy — ' + ticker;
+  document.getElementById('buy-shares').value = shares;
+  document.getElementById('buy-price').value = entry;
+  document.getElementById('buy-stop').value = stop;
+  document.getElementById('buy-target').value = target;
+  document.getElementById('buy-shares-hint').textContent =
+    'Suggested: ' + shares + ' shares';
+  document.getElementById('buy-price-hint').textContent =
+    'Signal entry price: $' + entry;
+  document.getElementById('buy-overlay').classList.add('open');
+}
+
+function openSellForm(ticker, sharesRemaining, avgEntry) {
+  activeTicker = ticker;
+  activeShares = sharesRemaining;
+  activeEntry = avgEntry;
+  document.getElementById('sell-title').textContent = 'Log sell — ' + ticker;
+  document.getElementById('sell-shares').value = sharesRemaining;
+  document.getElementById('sell-shares-hint').textContent =
+    'Max: ' + sharesRemaining + ' shares remaining';
+  document.getElementById('sell-pnl-preview').style.display = 'none';
+  document.getElementById('sell-overlay').classList.add('open');
+
+  document.getElementById('sell-price').oninput = function() {
+    const price = parseFloat(this.value);
+    const shares = parseFloat(document.getElementById('sell-shares').value);
+    if (!isNaN(price) && !isNaN(shares) && activeEntry) {
+      const pnl = (price - activeEntry) * shares;
+      const preview = document.getElementById('sell-pnl-preview');
+      preview.style.display = 'block';
+      preview.style.color = pnl >= 0 ? '#1a7f4b' : '#c0392b';
+      preview.textContent = 'Estimated P&L: ' +
+        (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2) +
+        ' on ' + shares.toFixed(4) + ' shares';
+    }
+  };
+}
+
+function closeModal() {
+  document.getElementById('buy-overlay').classList.remove('open');
+  document.getElementById('sell-overlay').classList.remove('open');
+  activeTicker = null;
+}
+
+async function submitBuy() {
+  const shares = parseFloat(document.getElementById('buy-shares').value);
+  const price = parseFloat(document.getElementById('buy-price').value);
+  const stop = parseFloat(document.getElementById('buy-stop').value);
+  const target = parseFloat(document.getElementById('buy-target').value);
+
+  if (isNaN(shares) || shares <= 0) {
+    alert('Please enter a valid number of shares.'); return;
+  }
+  if (isNaN(price) || price <= 0) {
+    alert('Please enter a valid price.'); return;
+  }
+
+  const sig = DATA.signals.find(s => s.ticker === activeTicker) || {};
+  const payload = {
+    action: 'buy',
+    ticker: activeTicker,
+    shares: shares,
+    price: price,
+    stop: stop,
+    target: target,
+    atr: sig.atr || 0,
+    sector_etf: sig.sector_etf || 'N/A',
+    score: sig.score || 0
+  };
+
+  const result = await sendTrade(payload);
+  if (result) {
+    alert('Buy logged for ' + activeTicker + '! Refresh the page in a moment to see it.');
+    closeModal();
+  }
+}
+
+async function submitSell() {
+  const shares = parseFloat(document.getElementById('sell-shares').value);
+  const price = parseFloat(document.getElementById('sell-price').value);
+  const reason = document.getElementById('sell-reason').value;
+
+  if (isNaN(shares) || shares <= 0) {
+    alert('Please enter a valid number of shares.'); return;
+  }
+  if (shares > activeShares + 0.0001) {
+    alert('Cannot sell more shares than you hold (' + activeShares + ').'); return;
+  }
+  if (isNaN(price) || price <= 0) {
+    alert('Please enter a valid price.'); return;
+  }
+
+  const payload = {
+    action: 'sell',
+    ticker: activeTicker,
+    shares: shares,
+    price: price,
+    reason: reason
+  };
+
+  const result = await sendTrade(payload);
+  if (result) {
+    const pnl = (price - activeEntry) * shares;
+    alert('Sell logged for ' + activeTicker + '\nP&L: ' +
+      (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2) +
+      '\nRefresh the page in a moment.');
+    closeModal();
+  }
+}
+
+async function sendTrade(payload) {
+  try {
+    const resp = await fetch('https://css-trader-api.onrender.com/trade', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!resp.ok) {
+      const err = await resp.text();
+      alert('Error: ' + err);
+      return null;
+    }
+    return await resp.json();
+  } catch(e) {
+    alert('Could not connect to the trade logger. Is it running?\n' + e);
+    return null;
+  }
+}
+
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+});
+</script>
+</body>
+</html>
