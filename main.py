@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
-from dashboard.generate import generate_dashboard
+from docs.generate import generate_dashboard
 
 from config import (
     POSITIONS_FILE, MAX_POSITIONS, MAX_SECTOR_POSITIONS,
@@ -158,6 +158,7 @@ def main():
                   positions, exit_alerts)
 
     send_buy_signals(actionable)
+    generate_dashboard()
     send_alert(
         "CSS Scan Complete",
         f"Scanned {len(tickers)} stocks. {len(raw_signals)} scored >= 7. "
