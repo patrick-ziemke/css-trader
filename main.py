@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timezone
+from dashboard.generate import generate_dashboard
 
 from config import (
     POSITIONS_FILE, MAX_POSITIONS, MAX_SECTOR_POSITIONS,

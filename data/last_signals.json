@@ -1,0 +1,78 @@
+[
+  {
+    "ticker": "ROST",
+    "score": 8,
+    "signals": {
+      "trend_alignment": true,
+      "rsi_bounce": true,
+      "macd_flip": true,
+      "volume_surge": true,
+      "support_confluence": false,
+      "sector_strength": false
+    },
+    "entry": 234.81,
+    "stop": 220.77,
+    "target": 255.87,
+    "atr": 7.02,
+    "shares": 1,
+    "position_value": 234.81,
+    "sector_etf": "N/A"
+  },
+  {
+    "ticker": "AEE",
+    "score": 7,
+    "signals": {
+      "trend_alignment": true,
+      "rsi_bounce": true,
+      "macd_flip": true,
+      "volume_surge": false,
+      "support_confluence": true,
+      "sector_strength": false
+    },
+    "entry": 111.29,
+    "stop": 107.4,
+    "target": 117.12,
+    "atr": 1.94,
+    "shares": 2,
+    "position_value": 222.58,
+    "sector_etf": "N/A"
+  },
+  {
+    "ticker": "UPS",
+    "score": 7,
+    "signals": {
+      "trend_alignment": true,
+      "rsi_bounce": true,
+      "macd_flip": true,
+      "volume_surge": false,
+      "support_confluence": true,
+      "sector_strength": false
+    },
+    "entry": 101.02,
+    "stop": 96.67,
+    "target": 107.54,
+    "atr": 2.17,
+    "shares": 2,
+    "position_value": 202.04,
+    "sector_etf": "N/A"
+  },
+  {
+    "ticker": "XEL",
+    "score": 7,
+    "signals": {
+      "trend_alignment": true,
+      "rsi_bounce": true,
+      "macd_flip": true,
+      "volume_surge": false,
+      "support_confluence": true,
+      "sector_strength": false
+    },
+    "entry": 81.08,
+    "stop": 78.27,
+    "target": 85.29,
+    "atr": 1.4,
+    "shares": 3,
+    "position_value": 243.24,
+    "sector_etf": "N/A"
+  }
+]
